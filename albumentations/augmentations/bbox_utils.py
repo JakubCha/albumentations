@@ -327,6 +327,13 @@ def convert_bboxes_from_albumentations(bboxes, target_format, rows, cols, check_
 
 def check_bbox(bbox):
     """Check if bbox boundaries are in range 0, 1 and minimums are lesser then maximums"""
+    bbox=list(bbox)
+    for i in range(4):
+        if (bbox[i]<0 and bbox[i]>-0.1):
+            bbox[i]=0.0
+        elif (bbox[i]>1 and bbox[i]<1.1):
+            bbox[i]=1.0
+    bbox=tuple(bbox)
     for name, value in zip(["x_min", "y_min", "x_max", "y_max"], bbox[:4]):
         if not 0 <= value <= 1 and not np.isclose(value, 0) and not np.isclose(value, 1):
             raise ValueError(
@@ -338,7 +345,6 @@ def check_bbox(bbox):
         raise ValueError("x_max is less than or equal to x_min for bbox {bbox}.".format(bbox=bbox))
     if y_max <= y_min:
         raise ValueError("y_max is less than or equal to y_min for bbox {bbox}.".format(bbox=bbox))
-
 
 def check_bboxes(bboxes):
     """Check if bboxes boundaries are in range 0, 1 and minimums are lesser then maximums"""
